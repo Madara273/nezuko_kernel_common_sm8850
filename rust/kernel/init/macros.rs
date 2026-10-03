@@ -935,6 +935,7 @@ macro_rules! __pin_data {
         // `PinnedDrop` as the parameter to `#[pin_data]`.
         #[allow(dead_code)]
         #[expect(non_camel_case_types)]
+        #[allow(dead_code)]
         trait UselessPinnedDropImpl_you_need_to_specify_PinnedDrop {}
         impl<T: $crate::init::PinnedDrop>
             UselessPinnedDropImpl_you_need_to_specify_PinnedDrop for T {}

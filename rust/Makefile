@@ -431,11 +431,12 @@ endif
 
 ifdef CONFIG_MODVERSIONS
 cmd_gendwarfksyms = $(if $(skip_gendwarfksyms),, \
-	$(call rust_exports,$@,"%s\n") | \
-	scripts/gendwarfksyms/gendwarfksyms \
+	symbols="$$( $(call rust_exports,$@,"%s\n") )"; \
+	if [ -n "$$symbols" ]; then printf '%s\n' "$$symbols" | \
+		scripts/gendwarfksyms/gendwarfksyms \
 		$(if $(KBUILD_GENDWARFKSYMS_STABLE), --stable) \
 		$(if $(KBUILD_SYMTYPES), --symtypes $(@:.o=.symtypes),) \
-		$@ >> $(dot-target).cmd)
+		$@ >> $(dot-target).cmd; fi)
 endif
 
 define rule_rustc_library
