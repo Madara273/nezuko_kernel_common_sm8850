@@ -19,7 +19,5 @@ extern struct page *fake_status;
 struct static_key_false;
 extern struct static_key_false fake_status_initialize_key;
 
-struct selinux_state;
-extern struct selinux_state fake_state;
 
 #endif
