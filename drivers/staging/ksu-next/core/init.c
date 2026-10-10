@@ -102,6 +102,11 @@ module_param_named(bundled, ksu_bundled, bool, 0);
 
 int __init kernelsu_init(void)
 {
+#ifdef KSU_MANAGER_PACKAGE
+    pr_info("welcome to KernelSU version " __stringify(KERNEL_SU_VERSION) ", package name " KSU_MANAGER_PACKAGE "\n");
+#else
+    pr_info("welcome to KernelSU version " __stringify(KERNEL_SU_VERSION) "\n");
+#endif
 #ifdef CONFIG_KSU_SUSFS
 	susfs_init();
 #endif // #ifdef KSU_SUSFS
@@ -199,6 +204,8 @@ int __init kernelsu_init(void)
 
 		ksu_boot_completed = true;
 		track_throne(false);
+
+		ksu_feature_apply_forced();
 
 		#ifdef CONFIG_KSU_SUSFS
 		ksu_avc_spoof_late_init();
