@@ -2015,6 +2015,15 @@ out:
 	bbr->ecn_in_cycle  |= rs->delivered_ce > 0;
 }
 
+/* Keep the module reference when falling back after an allocation failure. */
+static struct tcp_congestion_ops bbr3_reno __read_mostly = {
+	.ssthresh	= tcp_reno_ssthresh,
+	.cong_avoid	= tcp_reno_cong_avoid,
+	.undo_cwnd	= tcp_reno_undo_cwnd,
+	.owner		= THIS_MODULE,
+	.name		= "bbr3-reno",
+};
+
 static void bbr3_init(struct sock *sk)
 {
 	struct tcp_sock *tp = tcp_sk(sk);
@@ -2022,8 +2031,10 @@ static void bbr3_init(struct sock *sk)
 	struct bbr3 *bbr;
 
 	bbr = kmalloc(sizeof(struct bbr3), GFP_ATOMIC);
-	if (unlikely(!bbr))
+	if (unlikely(!bbr)) {
+		inet_csk(sk)->icsk_ca_ops = &bbr3_reno;
 		return;
+	}
 
 	memset(bbr, 0, sizeof(struct bbr3));
 
@@ -2111,6 +2122,8 @@ static void bbr3_init(struct sock *sk)
 __used noinline static void bbr3_release(struct sock *sk)
 {
 	struct bbr3 **bbr3_ptr = (struct bbr3 **)inet_csk_ca(sk);
+
+	tcp_sk(sk)->ecn_flags &= ~TCP_ECN_ECT_PERMANENT;
 
 	if (*bbr3_ptr) {
 		kfree(*bbr3_ptr);
