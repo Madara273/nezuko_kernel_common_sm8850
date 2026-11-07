@@ -2030,7 +2030,7 @@ static void bbr3_init(struct sock *sk)
 	*bbr3_ptr = bbr;
 
 	bbr->skb_marked_lost = bbr3_skb_marked_lost;
-	
+
 	bbr->initialized = 1;
 
 	bbr->init_cwnd = min(0x7FU, tcp_snd_cwnd(tp));
@@ -2252,7 +2252,7 @@ static size_t bbr3_get_info(struct sock *sk, u32 ext, int *attr,
 	    ext & (1 << (INET_DIAG_VEGASINFO - 1))) {
 		struct tcp_bbr_info *bbr_info;
 		u64 bw, bw_hi, bw_lo;
-		
+
 		struct bbr3 *bbr = bbr3_get_priv(sk);
 		if(!bbr || !bbr->initialized)
 			return 0;
